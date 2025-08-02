@@ -1,0 +1,29 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('CLONE GITHUB CODE') {
+            steps {
+                echo 'In this stage code will be clone'
+				git branch: 'main', url: 'https://github.com/Alugubelly1/kiran-mindcircuit15d.git'
+			
+            }
+        }
+		
+		 stage('BUILDING THE CODE') {
+            steps {
+                echo 'In this stage code will be build and mvn artifact will be generated'
+				
+				sh 'mvn clean install'
+            }
+        }
+		
+		 stage('DEPLOY TOMCAT') {
+            steps {
+                echo 'In this stage .war artiface will be deployed on tomcat'
+				
+			deploy adapters: [tomcat9(alternativeDeploymentContext: '', credentialsId: 'tomcat', path: '', url: 'http://ec2-44-203-0-229.compute-1.amazonaws.com:8081/')], contextPath: 'b15-facebook', war: '**/*.war'
+            }
+        }
+    }
+}
